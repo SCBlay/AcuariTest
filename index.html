@@ -3,10 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AcuariTest - Registro de Parámetros</title>
-    <link rel="manifest" href="/manifest.json">
-    <link rel="apple-touch-icon" href="icono.png">
-    <meta name="theme-color" content="#2c3e50">
+    <title>AcuariTest Multiacuario</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root { 
@@ -17,57 +14,59 @@
         
         body { font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); margin: 0; padding-bottom: 20px; color: #333; }
         
-        /* Navegación - Ajustada para 4 botones */
+        /* Navegación */
         .tabs { display: flex; background: var(--accent); position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
         .tab-btn { background: none; border: none; color: rgba(255,255,255,0.7); padding: 15px 2px; cursor: pointer; font-weight: bold; flex: 1; font-size: 0.75rem; transition: 0.3s; text-transform: uppercase; }
         .tab-btn.active { color: white; border-bottom: 4px solid var(--highlight); }
 
-        .content { display: none; padding: 15px; max-width: 600px; margin: auto; animation: fadeIn 0.3s; }
+        .content { display: none; padding: 10px; max-width: 600px; margin: auto; animation: fadeIn 0.3s; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .content.active { display: block; }
 
-        .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 20px; }
-        h2 { color: var(--accent); margin-top: 0; font-size: 1.2rem; border-bottom: 2px solid #f0f0f0; padding-bottom: 8px; margin-bottom: 15px; }
+        .card { background: white; padding: 15px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 15px; }
+        h2 { color: var(--accent); margin-top: 0; font-size: 1.1rem; border-bottom: 2px solid #f0f0f0; padding-bottom: 8px; margin-bottom: 15px; }
 
-        /* Formulario y Rejilla */
-        .input-group { display: flex; flex-direction: column; margin-bottom: 12px; }
-        label { margin-bottom: 4px; font-weight: 600; color: #555; font-size: 0.8rem; text-transform: uppercase; }
-        input, select { padding: 12px; border: 1px solid #dee2e6; border-radius: 10px; font-size: 1rem; transition: border 0.2s; }
-        
-        .grid-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        /* Selector de Acuario */
+        .acuario-selector-v2 { background: #34495e; color: white; padding: 15px; display: flex; gap: 10px; align-items: center; }
+        .acuario-selector-v2 select { flex: 1; padding: 8px; border-radius: 8px; border: none; }
+        .btn-add-acu { background: var(--highlight); color: white; border: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; }
 
-        .co2-control { display: flex; align-items: center; justify-content: space-between; background: #e9ecef; padding: 12px; border-radius: 10px; margin-bottom: 15px; }
+        /* Rejilla de Parámetros */
+        .input-group { display: flex; flex-direction: column; margin-bottom: 10px; }
+        label { margin-bottom: 4px; font-weight: 600; color: #555; font-size: 0.75rem; text-transform: uppercase; text-align: center; }
+        input, select { padding: 10px; border: 1px solid #dee2e6; border-radius: 8px; font-size: 0.9rem; text-align: center; width: 100%; box-sizing: border-box; }
         
+        .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 15px; }
+        .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; }
+
         /* Drop Checker */
-        .drop-checker { text-align: center; padding: 15px; border: 2px dashed #ccc; border-radius: 12px; margin: 10px 0; }
-        .drop-disabled { opacity: 0.4; filter: grayscale(1); pointer-events: none; }
-        .drop-btn { display: inline-block; width: 35px; height: 35px; border-radius: 50%; border: 3px solid white; margin: 0 5px; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .drop-checker { text-align: center; padding: 10px; border: 2px dashed #ccc; border-radius: 12px; margin-bottom: 15px; }
+        .drop-disabled { opacity: 0.3; filter: grayscale(1); pointer-events: none; }
+        .drop-btn { display: inline-block; width: 30px; height: 30px; border-radius: 50%; border: 3px solid white; margin: 0 5px; cursor: pointer; }
         .drop-btn.Azul { background: #004cff; }
         .drop-btn.Verde { background: #00ff22; }
         .drop-btn.Amarillo { background: #ffee00; }
         .drop-btn.selected { transform: scale(1.2); border-color: var(--accent); }
 
-        /* Botones principales */
-        .main-btn { width: 100%; padding: 15px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 1rem; transition: 0.3s; margin-bottom: 10px; display: block; text-align: center; text-decoration: none; box-sizing: border-box; }
+        .main-btn { width: 100%; padding: 15px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-bottom: 10px; display: block; text-align: center; text-decoration: none; box-sizing: border-box; }
         .btn-save { background: var(--highlight); color: white; }
         .btn-export { background: var(--btn-export); color: white; }
-        .btn-import { background: var(--btn-import); color: white; }
-
-        /* Calculadora Estilos */
-        .calc-result { background: var(--accent); color: white; padding: 15px; border-radius: 10px; text-align: center; margin-top: 15px; }
-        .calc-result span { font-size: 1.6rem; font-weight: bold; display: block; color: #00ff22; }
-        .abono-section { margin-top: 25px; padding-top: 20px; border-top: 2px dashed #ccc; }
 
         /* Historial */
-        .registro-item { border-left: 5px solid var(--highlight); background: #fff; padding: 15px; margin-bottom: 12px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); position: relative; }
-        .btn-del { position: absolute; top: 10px; right: 10px; background: none; border: none; color: var(--danger); font-size: 1.2rem; cursor: pointer; }
-        .data-badge { display: inline-block; background: #f1f3f5; padding: 2px 6px; border-radius: 4px; margin-right: 4px; margin-bottom: 4px; font-size: 0.75rem; }
+        .registro-item { border-left: 5px solid var(--highlight); background: #fff; padding: 12px; margin-bottom: 10px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); position: relative; }
+        .btn-del { position: absolute; top: 8px; right: 8px; background: none; border: none; color: var(--danger); font-size: 1.2rem; cursor: pointer; }
+        .data-badge { display: inline-block; background: #f1f3f5; padding: 2px 5px; border-radius: 4px; margin: 2px; font-size: 0.7rem; }
 
-        .chart-container { position: relative; height: 300px; width: 100%; }
+        .chart-container { position: relative; height: 250px; width: 100%; margin-bottom: 20px; }
         #file-input { display: none; }
     </style>
 </head>
 <body>
+
+<div class="acuario-selector-v2">
+    <select id="sel_acuario" onchange="cambiarAcuario(this.value)"></select>
+    <button class="btn-add-acu" onclick="nuevoAcuario()">+ Nuevo</button>
+</div>
 
 <div class="tabs">
     <button class="tab-btn active" onclick="openTab('test', event)">📝 Test</button>
@@ -78,125 +77,112 @@
 
 <div id="test" class="content active">
     <div class="card">
-        <h2>📅 Nuevo Registro</h2>
-        <div class="input-group">
-            <label>Fecha y Hora</label>
-            <input type="datetime-local" id="fecha">
-        </div>
+        <h2 id="titulo_test">📅 Nuevo Registro</h2>
+        <div class="input-group"><label>Fecha y Hora</label><input type="datetime-local" id="fecha"></div>
         
-        <div class="co2-control">
-            <label style="margin:0;">¿Inyectas CO₂?</label>
-            <select id="co2_si_no" onchange="toggleDropChecker(this.value)">
-                <option value="no">No</option>
-                <option value="si">Sí</option>
+        <div style="display: flex; align-items: center; justify-content: space-between; background: #e9ecef; padding: 10px; border-radius: 10px; margin-bottom: 10px;">
+            <label style="margin:0; font-size: 0.8rem;">¿Inyectas CO₂?</label>
+            <select id="co2_si_no" style="width: auto;" onchange="toggleDropChecker(this.value)">
+                <option value="no">No</option><option value="si">Sí</option>
             </select>
         </div>
 
         <div id="drop_container" class="drop-checker drop-disabled">
-            <label>Drop Checker (CO₂)</label><br><br>
             <div class="drop-btn Azul" onclick="setDrop('Azul', this)"></div>
             <div class="drop-btn Verde" onclick="setDrop('Verde', this)"></div>
             <div class="drop-btn Amarillo" onclick="setDrop('Amarillo', this)"></div>
             <input type="hidden" id="drop_val" value="N/A">
         </div>
 
-        <div class="grid-inputs" id="inputs"></div>
-        <button class="main-btn btn-save" id="save-btn" onclick="guardar()">💾 Guardar Test</button>
-    </div>
+        <div class="row-3">
+            <div class="input-group"><label>pH</label><input type="number" id="ph" step="0.1" oninput="valida('ph', this.value)"></div>
+            <div class="input-group"><label>GH</label><input type="number" id="gh" step="1" oninput="valida('gh', this.value)"></div>
+            <div class="input-group"><label>KH</label><input type="number" id="kh" step="1" oninput="valida('kh', this.value)"></div>
+        </div>
+        <div class="row-3">
+            <div class="input-group"><label>NH4</label><input type="number" id="nh4" step="0.01" oninput="valida('nh4', this.value)"></div>
+            <div class="input-group"><label>NO2</label><input type="number" id="no2" step="0.01" oninput="valida('no2', this.value)"></div>
+            <div class="input-group"><label>NO3</label><input type="number" id="no3" step="1" oninput="valida('no3', this.value)"></div>
+        </div>
+        <div class="row-3">
+            <div class="input-group"><label>PO4</label><input type="number" id="po4" step="0.01" oninput="valida('po4', this.value)"></div>
+            <div class="input-group"><label>Si</label><input type="number" id="si" step="0.1" oninput="valida('si', this.value)"></div>
+            <div class="input-group"><label>K+</label><input type="number" id="k" step="1" oninput="valida('k', this.value)"></div>
+        </div>
+        <div class="row-2">
+            <div class="input-group"><label>Temp °C</label><input type="number" id="temp" step="0.1" oninput="valida('temp', this.value)"></div>
+            <div class="input-group"><label>TDS</label><input type="number" id="tds" step="1" oninput="valida('tds', this.value)"></div>
+        </div>
 
-    <div class="card">
-        <h2>📈 Tendencias</h2>
-        <div class="chart-container"><canvas id="grafica"></canvas></div>
+        <button class="main-btn btn-save" id="save-btn" onclick="guardar()">💾 Guardar en <span id="nombre_acu_btn"></span></button>
     </div>
 </div>
 
 <div id="historial" class="content">
     <div class="card">
-        <h2>📜 Respaldo y Datos</h2>
-        <button class="main-btn btn-export" onclick="exportarCSV()">📊 Exportar a Excel (CSV)</button>
-        <label for="file-input" class="main-btn btn-import">📥 Importar desde Excel (CSV)</label>
-        <input type="file" id="file-input" accept=".csv" onchange="importarCSV(event)">
-        <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+        <h2 id="titulo_grafica">📈 Tendencias</h2>
+        <div class="chart-container"><canvas id="grafica"></canvas></div>
+    </div>
+    <div class="card">
+        <h2>📜 Registros</h2>
         <div id="lista-registros"></div>
+        <button class="main-btn btn-export" onclick="exportarCSV()" style="margin-top:20px;">📊 Exportar Todo</button>
     </div>
 </div>
 
 <div id="calc" class="content">
     <div class="card">
         <h2>📏 Calculadora de Volumen</h2>
-        <div class="grid-inputs">
-            <div class="input-group">
-                <label>Frontal (cm)</label>
-                <input type="number" id="largo" placeholder="0" oninput="calcularLitros()">
-            </div>
-            <div class="input-group">
-                <label>Fondo (cm)</label>
-                <input type="number" id="ancho" placeholder="0" oninput="calcularLitros()">
-            </div>
+        <div class="row-3">
+            <div class="input-group"><label>Largo (cm)</label><input type="number" id="largo" oninput="calcularLitros()"></div>
+            <div class="input-group"><label>Ancho (cm)</label><input type="number" id="ancho" oninput="calcularLitros()"></div>
+            <div class="input-group"><label>Alto (cm)</label><input type="number" id="alto" oninput="calcularLitros()"></div>
         </div>
-        <div class="input-group" style="margin-top:10px;">
-            <label>Altura del Agua (cm)</label>
-            <input type="number" id="alto" placeholder="0" oninput="calcularLitros()">
-        </div>
-
-        <div class="calc-result">
-            Volumen Real Estimado:
-            <span id="litros-resultado">0 Litros</span>
-        </div>
-
-        <div class="abono-section">
-            <h2>🌿 Calculadora de Abono</h2>
-            <div style="background: #f8f9fa; border: 1px solid #ddd; padding: 20px; border-radius: 10px; text-align: center; color: #888;">
-                Aquí aparecerán los cálculos de abonado en el futuro.
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="info" class="content">
-    <div class="card" style="text-align: center;">
-        <p>Hola, soy <strong>Silvia</strong>,</p>
-        <p>He diseñado esta app para acuaristas. Es gratuita, offline y privada.</p>
-        <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
-        <div style="text-align: left; font-size: 0.9rem; color: #444;">
-            <strong>AcuariTest PWA:</strong>
-            <ul>
-                <li><strong>Privacidad:</strong> Tus datos se guardan solo en tu móvil.</li>
-                <li><strong>Instalación:</strong> Usa "Añadir a pantalla de inicio" en tu navegador.</li>
-                <li><strong>Backup:</strong> Exporta a Excel de vez en cuando.</li>
-            </ul>
-        </div>
+        <div class="calc-result">Volumen Real:<span id="litros-resultado">0 Litros</span></div>
     </div>
 </div>
 
 <script>
     const config = {
-        temp: { label: 'Temp°C', ok: 26, alerta: 28, color: '#FF5733' },
-        ph:   { label: 'pH', ok: 7.0, alerta: 8.2, color: '#33FF57' },
-        gh:   { label: 'GH', ok: 10, alerta: 15, color: '#3357FF' },
-        kh:   { label: 'KH', ok: 6, alerta: 10, color: '#F333FF' },
-        tds:  { label: 'TDS', ok: 200, alerta: 400, color: '#FFB833' },
-        no3:  { label: 'NO3', ok: 10, alerta: 25, color: '#33FFF3' },
-        po4:  { label: 'PO4', ok: 0.5, alerta: 1.5, color: '#8D33FF' }
+        ph: { label: 'pH', ok: 7.0, alerta: 8.0 }, gh: { label: 'GH', ok: 10, alerta: 15 }, kh: { label: 'KH', ok: 6, alerta: 10 },
+        nh4: { label: 'NH4', ok: 0, alerta: 0.1 }, no2: { label: 'NO2', ok: 0, alerta: 0.1 }, no3: { label: 'NO3', ok: 10, alerta: 25 },
+        po4: { label: 'PO4', ok: 0.5, alerta: 1.5 }, si: { label: 'Si', ok: 0.2, alerta: 1.0 }, k: { label: 'K', ok: 15, alerta: 25 },
+        temp: { label: 'T', ok: 26, alerta: 28 }, tds: { label: 'TDS', ok: 200, alerta: 400 }
     };
 
-    // Generar inputs automáticamente
-    const cont = document.getElementById('inputs');
-    Object.keys(config).forEach(k => {
-        cont.innerHTML += `
-            <div class="input-group">
-                <label>${config[k].label}</label>
-                <input type="number" id="${k}" step="0.01" oninput="valida('${k}', this.value)">
-            </div>`;
-    });
+    let acuarios = JSON.parse(localStorage.getItem('acu_list')) || ["Principal"];
+    let acuarioActivo = localStorage.getItem('acu_actual') || acuarios[0];
+
+    function actualizarInterfazSelector() {
+        const sel = document.getElementById('sel_acuario');
+        sel.innerHTML = acuarios.map(a => `<option value="${a}" ${a === acuarioActivo ? 'selected' : ''}>${a}</option>`).join('');
+        document.getElementById('nombre_acu_btn').innerText = acuarioActivo;
+    }
+
+    function nuevoAcuario() {
+        const nombre = prompt("Nombre del nuevo acuario:");
+        if (nombre && !acuarios.includes(nombre)) {
+            acuarios.push(nombre);
+            localStorage.setItem('acu_list', JSON.stringify(acuarios));
+            cambiarAcuario(nombre);
+        }
+    }
+
+    function cambiarAcuario(nombre) {
+        acuarioActivo = nombre;
+        localStorage.setItem('acu_actual', nombre);
+        actualizarInterfazSelector();
+        if (document.getElementById('historial').classList.contains('active')) {
+            cargarHistorial(); dibuja();
+        }
+    }
 
     function openTab(id, event) {
         document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(id).classList.add('active');
         event.currentTarget.classList.add('active');
-        if(id === 'historial') cargarHistorial();
-        if(id === 'test') setTimeout(dibuja, 100);
+        if(id === 'historial') { cargarHistorial(); setTimeout(dibuja, 100); }
     }
 
     function toggleDropChecker(val) {
@@ -221,53 +207,54 @@
 
     let chart;
     function dibuja() {
-        const h = JSON.parse(localStorage.getItem('acu_h')) || [];
-        if (h.length === 0) return;
-        const ds = Object.keys(config).map(k => ({
-            label: config[k].label, data: h.map(d => d[k]), borderColor: config[k].color, tension: 0.3, hidden: !['ph', 'temp'].includes(k)
-        }));
+        const h = (JSON.parse(localStorage.getItem('acu_h')) || []).filter(r => r.acuario === acuarioActivo);
+        if (h.length === 0) { if(chart) chart.destroy(); return; }
+        const ds = [{ label: 'pH', data: h.map(d => d.ph), borderColor: '#3498db', tension: 0.3 }, 
+                    { label: 'NO3', data: h.map(d => d.no3), borderColor: '#e74c3c', tension: 0.3 }];
         if (chart) chart.destroy();
         const ctx = document.getElementById('grafica');
         chart = new Chart(ctx, { type: 'line', data: { labels: h.map(d => d.fecha.split('T')[0]), datasets: ds }, options: { responsive: true, maintainAspectRatio: false } });
     }
 
     function guardar() {
-        const btn = document.getElementById('save-btn');
-        const reg = { id: Date.now(), fecha: document.getElementById('fecha').value, co2: document.getElementById('co2_si_no').value, drop: document.getElementById('drop_val').value };
+        const reg = { 
+            id: Date.now(), 
+            acuario: acuarioActivo,
+            fecha: document.getElementById('fecha').value, 
+            co2: document.getElementById('co2_si_no').value, 
+            drop: document.getElementById('drop_val').value 
+        };
         Object.keys(config).forEach(k => reg[k] = parseFloat(document.getElementById(k).value) || 0);
         const h = JSON.parse(localStorage.getItem('acu_h')) || [];
         h.push(reg);
         localStorage.setItem('acu_h', JSON.stringify(h));
         
+        const btn = document.getElementById('save-btn');
         btn.innerHTML = "✅ ¡Guardado!";
         setTimeout(() => { 
-            btn.innerHTML = "💾 Guardar Test"; 
+            btn.innerHTML = `💾 Guardar en ${acuarioActivo}`; 
             Object.keys(config).forEach(k => { document.getElementById(k).value = ""; document.getElementById(k).style.backgroundColor="white"; });
-            dibuja();
         }, 1500);
     }
 
     function cargarHistorial() {
-        const h = JSON.parse(localStorage.getItem('acu_h')) || [];
+        const h = (JSON.parse(localStorage.getItem('acu_h')) || []).filter(r => r.acuario === acuarioActivo);
         const lista = document.getElementById('lista-registros');
+        if(h.length === 0) { lista.innerHTML = `<p style="text-align:center; color:#888;">Sin datos en ${acuarioActivo}</p>`; return; }
         lista.innerHTML = h.slice().reverse().map(r => `
             <div class="registro-item">
                 <button class="btn-del" onclick="eliminar(${r.id})">×</button>
                 <strong>📅 ${r.fecha.replace('T',' ')}</strong><br>
-                <small>
-                    <span class="data-badge">pH: ${r.ph}</span>
-                    <span class="data-badge">NO3: ${r.no3}</span>
-                    <span class="data-badge">CO2: ${r.co2}</span>
-                </small>
+                ${Object.keys(config).map(k => r[k] ? `<span class="data-badge">${config[k].label}: ${r[k]}</span>` : '').join('')}
             </div>`).join('');
     }
 
     function eliminar(id) {
-        if(confirm("¿Eliminar este registro?")) {
+        if(confirm("¿Eliminar registro?")) {
             let h = JSON.parse(localStorage.getItem('acu_h')) || [];
             h = h.filter(r => r.id !== id);
             localStorage.setItem('acu_h', JSON.stringify(h));
-            cargarHistorial();
+            cargarHistorial(); dibuja();
         }
     }
 
@@ -275,46 +262,23 @@
         const l = parseFloat(document.getElementById('largo').value) || 0;
         const an = parseFloat(document.getElementById('ancho').value) || 0;
         const al = parseFloat(document.getElementById('alto').value) || 0;
-        const litros = (l * an * al) / 1000;
-        document.getElementById('litros-resultado').innerText = litros.toFixed(1) + " Litros";
+        document.getElementById('litros-resultado').innerText = ((l * an * al) / 1000).toFixed(1) + " Litros";
     }
 
     function exportarCSV() {
         const h = JSON.parse(localStorage.getItem('acu_h')) || [];
-        if(!h.length) return alert("Sin datos");
-        let csv = "fecha,co2,drop," + Object.keys(config).join(",") + "\n";
-        h.forEach(r => { csv += `${r.fecha},${r.co2},${r.drop},${Object.keys(config).map(k => r[k]).join(",")}\n`; });
+        if(!h.length) return;
+        let csv = "acuario,fecha,co2,drop," + Object.keys(config).join(",") + "\n";
+        h.forEach(r => { csv += `${r.acuario},${r.fecha},${r.co2},${r.drop},${Object.keys(config).map(k => r[k]).join(",")}\n`; });
         const a = document.createElement('a');
         a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
-        a.download = 'acuaritest_backup.csv';
+        a.download = 'backup_completo_acuarios.csv';
         a.click();
-    }
-
-    function importarCSV(event) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            try {
-                const lines = e.target.result.split('\n');
-                const keys = lines[0].trim().split(',');
-                const nuevoH = [];
-                for (let i = 1; i < lines.length; i++) {
-                    if (!lines[i].trim()) continue;
-                    const values = lines[i].split(',');
-                    const obj = { id: Date.now() + i };
-                    keys.forEach((key, index) => { obj[key] = (index < 3) ? values[index] : parseFloat(values[index]); });
-                    nuevoH.push(obj);
-                }
-                localStorage.setItem('acu_h', JSON.stringify(nuevoH));
-                alert("¡Importado!");
-                cargarHistorial();
-            } catch (err) { alert("Error de archivo"); }
-        };
-        reader.readAsText(event.target.files[0]);
     }
 
     window.onload = () => { 
         document.getElementById('fecha').value = new Date().toISOString().slice(0, 16);
-        dibuja(); 
+        actualizarInterfazSelector();
     };
 </script>
 </body>
